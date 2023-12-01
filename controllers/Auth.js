@@ -36,6 +36,7 @@ export const register = async(req, res) => {
                 _id: newUser._id,
                 username: newUser.username,
                 email: newUser.email,
+                profilePicture: newUser.profilePicture,
                 token: generateToken(newUser._id)
             })
         }else {
@@ -69,6 +70,7 @@ export const login = async(req, res) => {
                 _id: user._id,
                 username: user.username,
                 email: user.email,
+                profilePicture: user.profilePicture,
                 token: generateToken(user._id),
                 
             })
@@ -82,3 +84,57 @@ export const login = async(req, res) => {
     }
 
 }
+
+//GOOGLE
+export const google = async(req, res) => {
+
+    const { name, email, photo } = req.body
+
+    // console.log(req.body)
+
+    try {
+
+        const user = await User.findOne({ email: req.body.email })
+
+
+        if(user){
+            res.status(200).json({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                profilePicture: user.profilePicture,
+                token: generateToken(user._id),
+                
+            })
+        }else {
+            const generatedPassword = Math.random().toString(36).slice(-8)
+            const hashedPassword = await bcrypt.hash(generatedPassword, 10)
+
+            const newUser = await User.create({
+                // username: req.body.name,
+                username: name.split(" ").join("").toLowerCase() + Math.floor(Math.random() * 10000).toString(),
+                email,
+                password: hashedPassword,
+                profilePicture: photo
+            })
+            
+            if(newUser){
+                res.status(201).json({
+                    _id: newUser._id,
+                    username: newUser.username,
+                    email: newUser.email,
+                    profilePicture: newUser.profilePicture,
+                    token: generateToken(newUser._id)
+                })
+            }
+        }
+        
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+
+
+}
+
+
+

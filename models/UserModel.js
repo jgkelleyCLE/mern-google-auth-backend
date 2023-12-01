@@ -14,7 +14,11 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    profilePicture: {
+        type: String,
+        default: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png'
+    },
 }, { timestamps: true })
 
 const User = mongoose.model('User', UserSchema)
